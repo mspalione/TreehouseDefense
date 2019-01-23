@@ -8,11 +8,9 @@ namespace TreehouseDefense
 {
     class Tower
     {
-        private const int _range = 1;
-        private const int _power = 1;
-        private const double _accuracy = .75;
-
-        private static readonly Random _random = new Random();
+        protected virtual int Range { get; } = 1;
+        protected virtual int Power { get; } = 1;
+        protected virtual double Accuracy { get; } = .75;
 
         private readonly MapLocation _location;
 
@@ -21,32 +19,30 @@ namespace TreehouseDefense
             _location = location;
         }
 
-        public bool IsSuccessfulShot()
+        public virtual bool IsSuccessfulShot()
         {
-            return _random.NextDouble() < _accuracy;
+            return Random.NextDouble() < Accuracy;
         }
            
 
-        public void FireOnInvaders(Invader[] invaders)
+        public void FireOnInvaders(IInvader[] invaders)
         {
-
-            foreach(Invader invader in invaders)
+            foreach(IInvader invader in invaders)
             {
-                if(invader.IsActive && _location.InRangeOf(invader.Location, _range))
+                if(invader.IsActive && _location.InRangeOf(invader.Location, Range))
                 {
                     if (IsSuccessfulShot())
                     {
-                        invader.DecreaseHealth(_power);
-                        Console.WriteLine("Shot at and hit an invader!");
+                        invader.DecreaseHealth(Power);
 
                         if(invader.IsNeutralized)
                         {
-                            Console.WriteLine("Neutralized an invader!");
+                            Console.WriteLine("Neutralized an invader at " + invader.Location + "!");
                         }
                     }
                     else
                     {
-                        Console.WriteLine("Shot at and missed and invader.");
+                        Console.WriteLine("Shot at and missed an invader.");
                     }
                     break;
                 }
